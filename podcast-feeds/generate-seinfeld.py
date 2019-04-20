@@ -2,7 +2,7 @@ from feedgen.feed import FeedGenerator
 from os import listdir, rename
 from os.path import isfile, join, getsize
 from s3upload import upload_file
-
+from datetime import datetime, timezone, timedelta
 fg = FeedGenerator()
 fg.load_extension('podcast')
 fg.id('http://dannyshaw.github.io/podcast-feeds')
@@ -17,12 +17,17 @@ FILES = '/home/danny/Downloads/audio'
 
 episodes = sorted([f for f in listdir(FILES) if isfile(join(FILES, f))])
 
-for ep in episodes:
+for index, ep in enumerate(episodes):
     # upload_file(join(FILES, ep), 'danny.podcasts.seinfeld', ep)
     file_size = getsize(join(FILES, ep))
     fe = fg.add_entry()
     fe.id(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
     fe.title(ep)
+    fe.description(ep)
+
+    pub_date = datetime(1999, 1, 1, tzinfo=timezone.utc) + timedelta(index)
+
+    fe.pubDate(pub_date)
     fe.link(href=f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
     fe.enclosure(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}',
                  f'{file_size}', 'audio/mpeg')
