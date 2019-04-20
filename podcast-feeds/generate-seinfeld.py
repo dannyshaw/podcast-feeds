@@ -4,6 +4,7 @@ from os.path import isfile, join, getsize
 from s3upload import upload_file
 
 fg = FeedGenerator()
+fg.load_extension('podcast')
 fg.id('http://dannyshaw.github.io/podcast-feeds')
 fg.title('Danny\'s Podcasts')
 fg.author({'name': 'Danny Shaw', 'email': 'code@dannyshaw.io'})
@@ -20,10 +21,10 @@ for ep in episodes:
     # upload_file(join(FILES, ep), 'danny.podcasts.seinfeld', ep)
     file_size = getsize(join(FILES, ep))
     fe = fg.add_entry()
-    fe.id(f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}')
+    fe.id(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
     fe.title(ep)
-    fe.link(href=f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}')
-    fe.enclosure(f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}',
+    fe.link(href=f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
+    fe.enclosure(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}',
                  f'{file_size}', 'audio/mpeg')
 
 # ep.rename()
