@@ -1,6 +1,6 @@
 from feedgen.feed import FeedGenerator
 from os import listdir, rename
-from os.path import isfile, join
+from os.path import isfile, join, getsize
 from s3upload import upload_file
 
 fg = FeedGenerator()
@@ -17,15 +17,19 @@ FILES = '/home/danny/Downloads/audio'
 episodes = sorted([f for f in listdir(FILES) if isfile(join(FILES, f))])
 
 for ep in episodes:
-    upload_file(join(FILES, ep), 'danny.podcasts.seinfeld', ep)
-    # fe = fg.add_entry()
-    # fe.id(f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}')
-    # fe.title(ep)
-    # fe.link(href=f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}')
+    # upload_file(join(FILES, ep), 'danny.podcasts.seinfeld', ep)
+    file_size = getsize(join(FILES, ep))
+    fe = fg.add_entry()
+    fe.id(f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}')
+    fe.title(ep)
+    fe.link(href=f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}')
+    fe.enclosure(f'http://dannyshaw.github.io/podcast-feeds/seineld/{ep}',
+                 f'{file_size}', 'audio/mpeg')
 
 # ep.rename()
 # Write the RSS feed to a file
-# fg.rss_file('rss.xml')
+fg.rss_str(pretty=True)
+fg.rss_file('rss.xml')
 
 
 def rename_files():
