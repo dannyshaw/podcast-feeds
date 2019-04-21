@@ -3,39 +3,43 @@ from os import listdir, rename
 from os.path import isfile, join, getsize
 from s3upload import upload_file
 from datetime import datetime, timezone, timedelta
-fg = FeedGenerator()
-fg.load_extension('podcast')
-fg.id('http://dannyshaw.github.io/podcast-feeds')
-fg.title('Danny\'s Podcasts')
-fg.author({'name': 'Danny Shaw', 'email': 'code@dannyshaw.io'})
-fg.link(href='http://dannyshaw.github.io/podcast-feeds', rel='alternate')
-fg.subtitle('My personal rss feed...')
-fg.link(href='http://dannyshaw.github.io/podcast-feeds/rss.xml', rel='self')
-fg.language('en')
 
 FILES = '/home/danny/Downloads/audio'
 
-episodes = sorted([f for f in listdir(FILES) if isfile(join(FILES, f))])
 
-for index, ep in enumerate(episodes):
-    # upload_file(join(FILES, ep), 'danny.podcasts.seinfeld', ep)
-    file_size = getsize(join(FILES, ep))
-    fe = fg.add_entry()
-    fe.id(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
-    fe.title(ep)
-    fe.description(ep)
+def generate_feed_from_episodes(episodes):
+    fg = FeedGenerator()
+    fg.load_extension('podcast')
+    fg.id('http://dannyshaw.github.io/podcast-feeds')
+    fg.title('Danny\'s Podcasts')
+    fg.author({'name': 'Danny Shaw', 'email': 'code@dannyshaw.io'})
+    fg.link(href='http://dannyshaw.github.io/podcast-feeds', rel='alternate')
+    fg.subtitle('My personal rss feed...')
+    fg.link(
+        href='http://dannyshaw.github.io/podcast-feeds/rss.xml', rel='self')
+    fg.language('en')
 
-    pub_date = datetime(1999, 1, 1, tzinfo=timezone.utc) + timedelta(index)
+    for index, ep in enumerate(episodes):
+        file_size = getsize(join(FILES, ep))
+        fe = fg.add_entry()
+        fe.id(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
+        fe.title(ep)
+        fe.description(ep)
 
-    fe.pubDate(pub_date)
-    fe.link(href=f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
-    fe.enclosure(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}',
-                 f'{file_size}', 'audio/mpeg')
+        pub_date = datetime(1999, 1, 1, tzinfo=timezone.utc) + timedelta(index)
 
-# ep.rename()
-# Write the RSS feed to a file
-fg.rss_str(pretty=True)
-fg.rss_file('rss.xml')
+        fe.pubDate(pub_date)
+        fe.link(href=f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}')
+        fe.enclosure(f'https://s3.amazonaws.com/danny.podcasts.seinfeld/{ep}',
+                     f'{file_size}', 'audio/mpeg')
+
+    fg.rss_str(pretty=True)
+    fg.rss_file('rss.xml')
+
+
+def upload_to_s3(episodes):
+    for index, ep in enumerate(episodes):
+        upload_file(join(FILES, ep), 'danny.podcasts.seinfeld', ep)
 
 
 def rename_files():
@@ -46,3 +50,8 @@ def rename_files():
         new_name = (ep.replace(' - ', '-').replace(' ', '-').replace('(', '')
                     .replace(')', '').replace(',-', '-').lower())
         rename(file_name, join(FILES, new_name))
+
+
+episodes = sorted([f for f in listdir(FILES) if isfile(join(FILES, f))])
+# upload_to_s3(episodes)
+generate_feed_from_episodes(episodes)
