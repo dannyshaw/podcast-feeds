@@ -16,7 +16,7 @@ def generate_feed_from_episodes(episodes):
     fg.subtitle('I\'ve seen them enough, audio is all I need.')
     fg.link(
         href=
-        'https://raw.githubusercontent.com/dannyshaw/podcast-feeds/master/podcast-feeds/rss.xml',
+        'https://raw.githubusercontent.com/dannyshaw/podcast-feeds/master/podcast-feeds/seinfeld.xml',
         rel='self')
     fg.language('en')
 
@@ -35,7 +35,7 @@ def generate_feed_from_episodes(episodes):
                      f'{file_size}', 'audio/mpeg')
 
     fg.rss_str(pretty=True)
-    fg.rss_file('rss.xml')
+    fg.rss_file('seinfeld.xml')
 
 
 def upload_to_s3(episodes):
