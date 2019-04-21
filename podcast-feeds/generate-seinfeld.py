@@ -15,7 +15,9 @@ def generate_feed_from_episodes(episodes):
     fg.link(href='http://dannyshaw.github.io/podcast-feeds', rel='alternate')
     fg.subtitle('I\'ve seen them enough, audio is all I need.')
     fg.link(
-        href='http://dannyshaw.github.io/podcast-feeds/rss.xml', rel='self')
+        href=
+        'https://raw.githubusercontent.com/dannyshaw/podcast-feeds/master/podcast-feeds/rss.xml',
+        rel='self')
     fg.language('en')
 
     for index, ep in enumerate(episodes):
