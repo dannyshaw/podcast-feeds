@@ -11,10 +11,9 @@ def generate_feed_from_episodes(episodes):
     fg = FeedGenerator()
     fg.load_extension('podcast')
     fg.id('http://dannyshaw.github.io/podcast-feeds')
-    fg.title('Danny\'s Podcasts')
-    fg.author({'name': 'Danny Shaw', 'email': 'code@dannyshaw.io'})
+    fg.title('Seinfeld Complete Audio')
     fg.link(href='http://dannyshaw.github.io/podcast-feeds', rel='alternate')
-    fg.subtitle('My personal rss feed...')
+    fg.subtitle('I\'ve seen them enough, audio is all I need.')
     fg.link(
         href='http://dannyshaw.github.io/podcast-feeds/rss.xml', rel='self')
     fg.language('en')
